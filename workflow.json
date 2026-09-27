@@ -1,0 +1,2400 @@
+{
+  "bundleid": "io.github.x-o-r-r-o.translate",
+  "name": "Translate",
+  "description": "Translate text with Google Translate or DeepL: dictionary, romanization, speech and history",
+  "category": "Productivity",
+  "createdby": "x-o-r-r-o",
+  "webaddress": "https://github.com/x-o-r-r-o/alfred-translate",
+  "version": "1.0.0",
+  "variablesdontexport": [],
+  "config": [
+    {
+      "type": "textfield",
+      "variable": "keyword_translate",
+      "label": "Keywords",
+      "description": "Translate text, the clipboard or the selection",
+      "config": {
+        "default": "tra",
+        "placeholder": "tra",
+        "required": true,
+        "trim": true
+      }
+    },
+    {
+      "type": "textfield",
+      "variable": "keyword_history",
+      "label": "",
+      "description": "Recent translations",
+      "config": {
+        "default": "trh",
+        "placeholder": "trh",
+        "required": true,
+        "trim": true
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_provider",
+      "label": "Provider",
+      "description": "DeepL needs a free API key: save it via “tra apikey”. Google Translate is used for languages DeepL doesn’t have.",
+      "config": {
+        "default": "google",
+        "pairs": [
+          [
+            "Google Translate (no key)",
+            "google"
+          ],
+          [
+            "DeepL (API key)",
+            "deepl"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_language1",
+      "label": "Translate into",
+      "description": "",
+      "config": {
+        "default": "system",
+        "pairs": [
+          [
+            "System language",
+            "system"
+          ],
+          [
+            "Abkhaz",
+            "ab"
+          ],
+          [
+            "Acehnese",
+            "ace"
+          ],
+          [
+            "Acholi",
+            "ach"
+          ],
+          [
+            "Afar",
+            "aa"
+          ],
+          [
+            "Afrikaans",
+            "af"
+          ],
+          [
+            "Albanian",
+            "sq"
+          ],
+          [
+            "Alur",
+            "alz"
+          ],
+          [
+            "Amharic",
+            "am"
+          ],
+          [
+            "Arabic",
+            "ar"
+          ],
+          [
+            "Armenian",
+            "hy"
+          ],
+          [
+            "Assamese",
+            "as"
+          ],
+          [
+            "Avar",
+            "av"
+          ],
+          [
+            "Awadhi",
+            "awa"
+          ],
+          [
+            "Aymara",
+            "ay"
+          ],
+          [
+            "Azerbaijani",
+            "az"
+          ],
+          [
+            "Balinese",
+            "ban"
+          ],
+          [
+            "Baluchi",
+            "bal"
+          ],
+          [
+            "Bambara",
+            "bm"
+          ],
+          [
+            "Baoulé",
+            "bci"
+          ],
+          [
+            "Bashkir",
+            "ba"
+          ],
+          [
+            "Basque",
+            "eu"
+          ],
+          [
+            "Batak Karo",
+            "btx"
+          ],
+          [
+            "Batak Simalungun",
+            "bts"
+          ],
+          [
+            "Batak Toba",
+            "bbc"
+          ],
+          [
+            "Belarusian",
+            "be"
+          ],
+          [
+            "Bemba",
+            "bem"
+          ],
+          [
+            "Bengali",
+            "bn"
+          ],
+          [
+            "Betawi",
+            "bew"
+          ],
+          [
+            "Bhojpuri",
+            "bho"
+          ],
+          [
+            "Bikol",
+            "bik"
+          ],
+          [
+            "Bosnian",
+            "bs"
+          ],
+          [
+            "Breton",
+            "br"
+          ],
+          [
+            "Bulgarian",
+            "bg"
+          ],
+          [
+            "Buryat",
+            "bua"
+          ],
+          [
+            "Cantonese",
+            "yue"
+          ],
+          [
+            "Catalan",
+            "ca"
+          ],
+          [
+            "Cebuano",
+            "ceb"
+          ],
+          [
+            "Chamorro",
+            "ch"
+          ],
+          [
+            "Chechen",
+            "ce"
+          ],
+          [
+            "Chichewa",
+            "ny"
+          ],
+          [
+            "Chinese (Simplified)",
+            "zh-CN"
+          ],
+          [
+            "Chinese (Traditional)",
+            "zh-TW"
+          ],
+          [
+            "Chuukese",
+            "chk"
+          ],
+          [
+            "Chuvash",
+            "cv"
+          ],
+          [
+            "Corsican",
+            "co"
+          ],
+          [
+            "Crimean Tatar (Cyrillic)",
+            "crh"
+          ],
+          [
+            "Crimean Tatar (Latin)",
+            "crh-Latn"
+          ],
+          [
+            "Croatian",
+            "hr"
+          ],
+          [
+            "Czech",
+            "cs"
+          ],
+          [
+            "Danish",
+            "da"
+          ],
+          [
+            "Dari",
+            "fa-AF"
+          ],
+          [
+            "Dhivehi",
+            "dv"
+          ],
+          [
+            "Dinka",
+            "din"
+          ],
+          [
+            "Dogri",
+            "doi"
+          ],
+          [
+            "Dombe",
+            "dov"
+          ],
+          [
+            "Dutch",
+            "nl"
+          ],
+          [
+            "Dyula",
+            "dyu"
+          ],
+          [
+            "Dzongkha",
+            "dz"
+          ],
+          [
+            "English",
+            "en"
+          ],
+          [
+            "Esperanto",
+            "eo"
+          ],
+          [
+            "Estonian",
+            "et"
+          ],
+          [
+            "Ewe",
+            "ee"
+          ],
+          [
+            "Faroese",
+            "fo"
+          ],
+          [
+            "Fijian",
+            "fj"
+          ],
+          [
+            "Filipino",
+            "tl"
+          ],
+          [
+            "Finnish",
+            "fi"
+          ],
+          [
+            "Fon",
+            "fon"
+          ],
+          [
+            "French",
+            "fr"
+          ],
+          [
+            "French (Canada)",
+            "fr-CA"
+          ],
+          [
+            "Frisian",
+            "fy"
+          ],
+          [
+            "Friulian",
+            "fur"
+          ],
+          [
+            "Fulani",
+            "ff"
+          ],
+          [
+            "Ga",
+            "gaa"
+          ],
+          [
+            "Galician",
+            "gl"
+          ],
+          [
+            "Georgian",
+            "ka"
+          ],
+          [
+            "German",
+            "de"
+          ],
+          [
+            "Greek",
+            "el"
+          ],
+          [
+            "Guarani",
+            "gn"
+          ],
+          [
+            "Gujarati",
+            "gu"
+          ],
+          [
+            "Haitian Creole",
+            "ht"
+          ],
+          [
+            "Hakha Chin",
+            "cnh"
+          ],
+          [
+            "Hausa",
+            "ha"
+          ],
+          [
+            "Hawaiian",
+            "haw"
+          ],
+          [
+            "Hebrew",
+            "iw"
+          ],
+          [
+            "Hiligaynon",
+            "hil"
+          ],
+          [
+            "Hindi",
+            "hi"
+          ],
+          [
+            "Hmong",
+            "hmn"
+          ],
+          [
+            "Hungarian",
+            "hu"
+          ],
+          [
+            "Hunsrik",
+            "hrx"
+          ],
+          [
+            "Iban",
+            "iba"
+          ],
+          [
+            "Icelandic",
+            "is"
+          ],
+          [
+            "Igbo",
+            "ig"
+          ],
+          [
+            "Ilocano",
+            "ilo"
+          ],
+          [
+            "Indonesian",
+            "id"
+          ],
+          [
+            "Inuktut (Latin)",
+            "iu-Latn"
+          ],
+          [
+            "Inuktut (Syllabics)",
+            "iu"
+          ],
+          [
+            "Irish",
+            "ga"
+          ],
+          [
+            "Italian",
+            "it"
+          ],
+          [
+            "Jamaican Patois",
+            "jam"
+          ],
+          [
+            "Japanese",
+            "ja"
+          ],
+          [
+            "Javanese",
+            "jv"
+          ],
+          [
+            "Jingpo",
+            "kac"
+          ],
+          [
+            "Kalaallisut",
+            "kl"
+          ],
+          [
+            "Kannada",
+            "kn"
+          ],
+          [
+            "Kanuri",
+            "kr"
+          ],
+          [
+            "Kapampangan",
+            "pam"
+          ],
+          [
+            "Kazakh",
+            "kk"
+          ],
+          [
+            "Khasi",
+            "kha"
+          ],
+          [
+            "Khmer",
+            "km"
+          ],
+          [
+            "Kiga",
+            "cgg"
+          ],
+          [
+            "Kikongo",
+            "kg"
+          ],
+          [
+            "Kinyarwanda",
+            "rw"
+          ],
+          [
+            "Kituba",
+            "ktu"
+          ],
+          [
+            "Kokborok",
+            "trp"
+          ],
+          [
+            "Komi",
+            "kv"
+          ],
+          [
+            "Konkani",
+            "gom"
+          ],
+          [
+            "Korean",
+            "ko"
+          ],
+          [
+            "Krio",
+            "kri"
+          ],
+          [
+            "Kurdish (Kurmanji)",
+            "ku"
+          ],
+          [
+            "Kurdish (Sorani)",
+            "ckb"
+          ],
+          [
+            "Kyrgyz",
+            "ky"
+          ],
+          [
+            "Lao",
+            "lo"
+          ],
+          [
+            "Latgalian",
+            "ltg"
+          ],
+          [
+            "Latin",
+            "la"
+          ],
+          [
+            "Latvian",
+            "lv"
+          ],
+          [
+            "Ligurian",
+            "lij"
+          ],
+          [
+            "Limburgish",
+            "li"
+          ],
+          [
+            "Lingala",
+            "ln"
+          ],
+          [
+            "Lithuanian",
+            "lt"
+          ],
+          [
+            "Lombard",
+            "lmo"
+          ],
+          [
+            "Luganda",
+            "lg"
+          ],
+          [
+            "Luo",
+            "luo"
+          ],
+          [
+            "Luxembourgish",
+            "lb"
+          ],
+          [
+            "Macedonian",
+            "mk"
+          ],
+          [
+            "Madurese",
+            "mad"
+          ],
+          [
+            "Maithili",
+            "mai"
+          ],
+          [
+            "Makassar",
+            "mak"
+          ],
+          [
+            "Malagasy",
+            "mg"
+          ],
+          [
+            "Malay",
+            "ms"
+          ],
+          [
+            "Malay (Jawi)",
+            "ms-Arab"
+          ],
+          [
+            "Malayalam",
+            "ml"
+          ],
+          [
+            "Maltese",
+            "mt"
+          ],
+          [
+            "Mam",
+            "mam"
+          ],
+          [
+            "Manx",
+            "gv"
+          ],
+          [
+            "Maori",
+            "mi"
+          ],
+          [
+            "Marathi",
+            "mr"
+          ],
+          [
+            "Marshallese",
+            "mh"
+          ],
+          [
+            "Marwadi",
+            "mwr"
+          ],
+          [
+            "Mauritian Creole",
+            "mfe"
+          ],
+          [
+            "Meadow Mari",
+            "chm"
+          ],
+          [
+            "Meiteilon (Manipuri)",
+            "mni-Mtei"
+          ],
+          [
+            "Minang",
+            "min"
+          ],
+          [
+            "Mizo",
+            "lus"
+          ],
+          [
+            "Mongolian",
+            "mn"
+          ],
+          [
+            "Myanmar (Burmese)",
+            "my"
+          ],
+          [
+            "NKo",
+            "bm-Nkoo"
+          ],
+          [
+            "Nahuatl (Eastern Huasteca)",
+            "nhe"
+          ],
+          [
+            "Ndau",
+            "ndc-ZW"
+          ],
+          [
+            "Ndebele (South)",
+            "nr"
+          ],
+          [
+            "Nepalbhasa (Newari)",
+            "new"
+          ],
+          [
+            "Nepali",
+            "ne"
+          ],
+          [
+            "Norwegian",
+            "no"
+          ],
+          [
+            "Nuer",
+            "nus"
+          ],
+          [
+            "Occitan",
+            "oc"
+          ],
+          [
+            "Odia (Oriya)",
+            "or"
+          ],
+          [
+            "Oromo",
+            "om"
+          ],
+          [
+            "Ossetian",
+            "os"
+          ],
+          [
+            "Pangasinan",
+            "pag"
+          ],
+          [
+            "Papiamento",
+            "pap"
+          ],
+          [
+            "Pashto",
+            "ps"
+          ],
+          [
+            "Persian",
+            "fa"
+          ],
+          [
+            "Polish",
+            "pl"
+          ],
+          [
+            "Portuguese (Brazil)",
+            "pt"
+          ],
+          [
+            "Portuguese (Portugal)",
+            "pt-PT"
+          ],
+          [
+            "Punjabi (Gurmukhi)",
+            "pa"
+          ],
+          [
+            "Punjabi (Shahmukhi)",
+            "pa-Arab"
+          ],
+          [
+            "Quechua",
+            "qu"
+          ],
+          [
+            "Qʼeqchiʼ",
+            "kek"
+          ],
+          [
+            "Romani",
+            "rom"
+          ],
+          [
+            "Romanian",
+            "ro"
+          ],
+          [
+            "Rundi",
+            "rn"
+          ],
+          [
+            "Russian",
+            "ru"
+          ],
+          [
+            "Sami (North)",
+            "se"
+          ],
+          [
+            "Samoan",
+            "sm"
+          ],
+          [
+            "Sango",
+            "sg"
+          ],
+          [
+            "Sanskrit",
+            "sa"
+          ],
+          [
+            "Santali (Latin)",
+            "sat-Latn"
+          ],
+          [
+            "Santali (Ol Chiki)",
+            "sat"
+          ],
+          [
+            "Scots Gaelic",
+            "gd"
+          ],
+          [
+            "Sepedi",
+            "nso"
+          ],
+          [
+            "Serbian",
+            "sr"
+          ],
+          [
+            "Sesotho",
+            "st"
+          ],
+          [
+            "Seychellois Creole",
+            "crs"
+          ],
+          [
+            "Shan",
+            "shn"
+          ],
+          [
+            "Shona",
+            "sn"
+          ],
+          [
+            "Sicilian",
+            "scn"
+          ],
+          [
+            "Silesian",
+            "szl"
+          ],
+          [
+            "Sindhi",
+            "sd"
+          ],
+          [
+            "Sinhala",
+            "si"
+          ],
+          [
+            "Slovak",
+            "sk"
+          ],
+          [
+            "Slovenian",
+            "sl"
+          ],
+          [
+            "Somali",
+            "so"
+          ],
+          [
+            "Spanish",
+            "es"
+          ],
+          [
+            "Sundanese",
+            "su"
+          ],
+          [
+            "Susu",
+            "sus"
+          ],
+          [
+            "Swahili",
+            "sw"
+          ],
+          [
+            "Swati",
+            "ss"
+          ],
+          [
+            "Swedish",
+            "sv"
+          ],
+          [
+            "Tahitian",
+            "ty"
+          ],
+          [
+            "Tajik",
+            "tg"
+          ],
+          [
+            "Tamazight",
+            "ber-Latn"
+          ],
+          [
+            "Tamazight (Tifinagh)",
+            "ber"
+          ],
+          [
+            "Tamil",
+            "ta"
+          ],
+          [
+            "Tatar",
+            "tt"
+          ],
+          [
+            "Telugu",
+            "te"
+          ],
+          [
+            "Tetum",
+            "tet"
+          ],
+          [
+            "Thai",
+            "th"
+          ],
+          [
+            "Tibetan",
+            "bo"
+          ],
+          [
+            "Tigrinya",
+            "ti"
+          ],
+          [
+            "Tiv",
+            "tiv"
+          ],
+          [
+            "Tok Pisin",
+            "tpi"
+          ],
+          [
+            "Tongan",
+            "to"
+          ],
+          [
+            "Tshiluba",
+            "lua"
+          ],
+          [
+            "Tsonga",
+            "ts"
+          ],
+          [
+            "Tswana",
+            "tn"
+          ],
+          [
+            "Tulu",
+            "tcy"
+          ],
+          [
+            "Tumbuka",
+            "tum"
+          ],
+          [
+            "Turkish",
+            "tr"
+          ],
+          [
+            "Turkmen",
+            "tk"
+          ],
+          [
+            "Tuvan",
+            "tyv"
+          ],
+          [
+            "Twi",
+            "ak"
+          ],
+          [
+            "Udmurt",
+            "udm"
+          ],
+          [
+            "Ukrainian",
+            "uk"
+          ],
+          [
+            "Urdu",
+            "ur"
+          ],
+          [
+            "Uyghur",
+            "ug"
+          ],
+          [
+            "Uzbek",
+            "uz"
+          ],
+          [
+            "Venda",
+            "ve"
+          ],
+          [
+            "Venetian",
+            "vec"
+          ],
+          [
+            "Vietnamese",
+            "vi"
+          ],
+          [
+            "Waray",
+            "war"
+          ],
+          [
+            "Welsh",
+            "cy"
+          ],
+          [
+            "Wolof",
+            "wo"
+          ],
+          [
+            "Xhosa",
+            "xh"
+          ],
+          [
+            "Yakut",
+            "sah"
+          ],
+          [
+            "Yiddish",
+            "yi"
+          ],
+          [
+            "Yoruba",
+            "yo"
+          ],
+          [
+            "Yucatec Maya",
+            "yua"
+          ],
+          [
+            "Zapotec",
+            "zap"
+          ],
+          [
+            "Zulu",
+            "zu"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_language2",
+      "label": "…or, when the text is already in it, into",
+      "description": "Like Raycast’s language pairs: English text becomes German, German text becomes English.",
+      "config": {
+        "default": "en",
+        "pairs": [
+          [
+            "Nothing (ask)",
+            "none"
+          ],
+          [
+            "Abkhaz",
+            "ab"
+          ],
+          [
+            "Acehnese",
+            "ace"
+          ],
+          [
+            "Acholi",
+            "ach"
+          ],
+          [
+            "Afar",
+            "aa"
+          ],
+          [
+            "Afrikaans",
+            "af"
+          ],
+          [
+            "Albanian",
+            "sq"
+          ],
+          [
+            "Alur",
+            "alz"
+          ],
+          [
+            "Amharic",
+            "am"
+          ],
+          [
+            "Arabic",
+            "ar"
+          ],
+          [
+            "Armenian",
+            "hy"
+          ],
+          [
+            "Assamese",
+            "as"
+          ],
+          [
+            "Avar",
+            "av"
+          ],
+          [
+            "Awadhi",
+            "awa"
+          ],
+          [
+            "Aymara",
+            "ay"
+          ],
+          [
+            "Azerbaijani",
+            "az"
+          ],
+          [
+            "Balinese",
+            "ban"
+          ],
+          [
+            "Baluchi",
+            "bal"
+          ],
+          [
+            "Bambara",
+            "bm"
+          ],
+          [
+            "Baoulé",
+            "bci"
+          ],
+          [
+            "Bashkir",
+            "ba"
+          ],
+          [
+            "Basque",
+            "eu"
+          ],
+          [
+            "Batak Karo",
+            "btx"
+          ],
+          [
+            "Batak Simalungun",
+            "bts"
+          ],
+          [
+            "Batak Toba",
+            "bbc"
+          ],
+          [
+            "Belarusian",
+            "be"
+          ],
+          [
+            "Bemba",
+            "bem"
+          ],
+          [
+            "Bengali",
+            "bn"
+          ],
+          [
+            "Betawi",
+            "bew"
+          ],
+          [
+            "Bhojpuri",
+            "bho"
+          ],
+          [
+            "Bikol",
+            "bik"
+          ],
+          [
+            "Bosnian",
+            "bs"
+          ],
+          [
+            "Breton",
+            "br"
+          ],
+          [
+            "Bulgarian",
+            "bg"
+          ],
+          [
+            "Buryat",
+            "bua"
+          ],
+          [
+            "Cantonese",
+            "yue"
+          ],
+          [
+            "Catalan",
+            "ca"
+          ],
+          [
+            "Cebuano",
+            "ceb"
+          ],
+          [
+            "Chamorro",
+            "ch"
+          ],
+          [
+            "Chechen",
+            "ce"
+          ],
+          [
+            "Chichewa",
+            "ny"
+          ],
+          [
+            "Chinese (Simplified)",
+            "zh-CN"
+          ],
+          [
+            "Chinese (Traditional)",
+            "zh-TW"
+          ],
+          [
+            "Chuukese",
+            "chk"
+          ],
+          [
+            "Chuvash",
+            "cv"
+          ],
+          [
+            "Corsican",
+            "co"
+          ],
+          [
+            "Crimean Tatar (Cyrillic)",
+            "crh"
+          ],
+          [
+            "Crimean Tatar (Latin)",
+            "crh-Latn"
+          ],
+          [
+            "Croatian",
+            "hr"
+          ],
+          [
+            "Czech",
+            "cs"
+          ],
+          [
+            "Danish",
+            "da"
+          ],
+          [
+            "Dari",
+            "fa-AF"
+          ],
+          [
+            "Dhivehi",
+            "dv"
+          ],
+          [
+            "Dinka",
+            "din"
+          ],
+          [
+            "Dogri",
+            "doi"
+          ],
+          [
+            "Dombe",
+            "dov"
+          ],
+          [
+            "Dutch",
+            "nl"
+          ],
+          [
+            "Dyula",
+            "dyu"
+          ],
+          [
+            "Dzongkha",
+            "dz"
+          ],
+          [
+            "English",
+            "en"
+          ],
+          [
+            "Esperanto",
+            "eo"
+          ],
+          [
+            "Estonian",
+            "et"
+          ],
+          [
+            "Ewe",
+            "ee"
+          ],
+          [
+            "Faroese",
+            "fo"
+          ],
+          [
+            "Fijian",
+            "fj"
+          ],
+          [
+            "Filipino",
+            "tl"
+          ],
+          [
+            "Finnish",
+            "fi"
+          ],
+          [
+            "Fon",
+            "fon"
+          ],
+          [
+            "French",
+            "fr"
+          ],
+          [
+            "French (Canada)",
+            "fr-CA"
+          ],
+          [
+            "Frisian",
+            "fy"
+          ],
+          [
+            "Friulian",
+            "fur"
+          ],
+          [
+            "Fulani",
+            "ff"
+          ],
+          [
+            "Ga",
+            "gaa"
+          ],
+          [
+            "Galician",
+            "gl"
+          ],
+          [
+            "Georgian",
+            "ka"
+          ],
+          [
+            "German",
+            "de"
+          ],
+          [
+            "Greek",
+            "el"
+          ],
+          [
+            "Guarani",
+            "gn"
+          ],
+          [
+            "Gujarati",
+            "gu"
+          ],
+          [
+            "Haitian Creole",
+            "ht"
+          ],
+          [
+            "Hakha Chin",
+            "cnh"
+          ],
+          [
+            "Hausa",
+            "ha"
+          ],
+          [
+            "Hawaiian",
+            "haw"
+          ],
+          [
+            "Hebrew",
+            "iw"
+          ],
+          [
+            "Hiligaynon",
+            "hil"
+          ],
+          [
+            "Hindi",
+            "hi"
+          ],
+          [
+            "Hmong",
+            "hmn"
+          ],
+          [
+            "Hungarian",
+            "hu"
+          ],
+          [
+            "Hunsrik",
+            "hrx"
+          ],
+          [
+            "Iban",
+            "iba"
+          ],
+          [
+            "Icelandic",
+            "is"
+          ],
+          [
+            "Igbo",
+            "ig"
+          ],
+          [
+            "Ilocano",
+            "ilo"
+          ],
+          [
+            "Indonesian",
+            "id"
+          ],
+          [
+            "Inuktut (Latin)",
+            "iu-Latn"
+          ],
+          [
+            "Inuktut (Syllabics)",
+            "iu"
+          ],
+          [
+            "Irish",
+            "ga"
+          ],
+          [
+            "Italian",
+            "it"
+          ],
+          [
+            "Jamaican Patois",
+            "jam"
+          ],
+          [
+            "Japanese",
+            "ja"
+          ],
+          [
+            "Javanese",
+            "jv"
+          ],
+          [
+            "Jingpo",
+            "kac"
+          ],
+          [
+            "Kalaallisut",
+            "kl"
+          ],
+          [
+            "Kannada",
+            "kn"
+          ],
+          [
+            "Kanuri",
+            "kr"
+          ],
+          [
+            "Kapampangan",
+            "pam"
+          ],
+          [
+            "Kazakh",
+            "kk"
+          ],
+          [
+            "Khasi",
+            "kha"
+          ],
+          [
+            "Khmer",
+            "km"
+          ],
+          [
+            "Kiga",
+            "cgg"
+          ],
+          [
+            "Kikongo",
+            "kg"
+          ],
+          [
+            "Kinyarwanda",
+            "rw"
+          ],
+          [
+            "Kituba",
+            "ktu"
+          ],
+          [
+            "Kokborok",
+            "trp"
+          ],
+          [
+            "Komi",
+            "kv"
+          ],
+          [
+            "Konkani",
+            "gom"
+          ],
+          [
+            "Korean",
+            "ko"
+          ],
+          [
+            "Krio",
+            "kri"
+          ],
+          [
+            "Kurdish (Kurmanji)",
+            "ku"
+          ],
+          [
+            "Kurdish (Sorani)",
+            "ckb"
+          ],
+          [
+            "Kyrgyz",
+            "ky"
+          ],
+          [
+            "Lao",
+            "lo"
+          ],
+          [
+            "Latgalian",
+            "ltg"
+          ],
+          [
+            "Latin",
+            "la"
+          ],
+          [
+            "Latvian",
+            "lv"
+          ],
+          [
+            "Ligurian",
+            "lij"
+          ],
+          [
+            "Limburgish",
+            "li"
+          ],
+          [
+            "Lingala",
+            "ln"
+          ],
+          [
+            "Lithuanian",
+            "lt"
+          ],
+          [
+            "Lombard",
+            "lmo"
+          ],
+          [
+            "Luganda",
+            "lg"
+          ],
+          [
+            "Luo",
+            "luo"
+          ],
+          [
+            "Luxembourgish",
+            "lb"
+          ],
+          [
+            "Macedonian",
+            "mk"
+          ],
+          [
+            "Madurese",
+            "mad"
+          ],
+          [
+            "Maithili",
+            "mai"
+          ],
+          [
+            "Makassar",
+            "mak"
+          ],
+          [
+            "Malagasy",
+            "mg"
+          ],
+          [
+            "Malay",
+            "ms"
+          ],
+          [
+            "Malay (Jawi)",
+            "ms-Arab"
+          ],
+          [
+            "Malayalam",
+            "ml"
+          ],
+          [
+            "Maltese",
+            "mt"
+          ],
+          [
+            "Mam",
+            "mam"
+          ],
+          [
+            "Manx",
+            "gv"
+          ],
+          [
+            "Maori",
+            "mi"
+          ],
+          [
+            "Marathi",
+            "mr"
+          ],
+          [
+            "Marshallese",
+            "mh"
+          ],
+          [
+            "Marwadi",
+            "mwr"
+          ],
+          [
+            "Mauritian Creole",
+            "mfe"
+          ],
+          [
+            "Meadow Mari",
+            "chm"
+          ],
+          [
+            "Meiteilon (Manipuri)",
+            "mni-Mtei"
+          ],
+          [
+            "Minang",
+            "min"
+          ],
+          [
+            "Mizo",
+            "lus"
+          ],
+          [
+            "Mongolian",
+            "mn"
+          ],
+          [
+            "Myanmar (Burmese)",
+            "my"
+          ],
+          [
+            "NKo",
+            "bm-Nkoo"
+          ],
+          [
+            "Nahuatl (Eastern Huasteca)",
+            "nhe"
+          ],
+          [
+            "Ndau",
+            "ndc-ZW"
+          ],
+          [
+            "Ndebele (South)",
+            "nr"
+          ],
+          [
+            "Nepalbhasa (Newari)",
+            "new"
+          ],
+          [
+            "Nepali",
+            "ne"
+          ],
+          [
+            "Norwegian",
+            "no"
+          ],
+          [
+            "Nuer",
+            "nus"
+          ],
+          [
+            "Occitan",
+            "oc"
+          ],
+          [
+            "Odia (Oriya)",
+            "or"
+          ],
+          [
+            "Oromo",
+            "om"
+          ],
+          [
+            "Ossetian",
+            "os"
+          ],
+          [
+            "Pangasinan",
+            "pag"
+          ],
+          [
+            "Papiamento",
+            "pap"
+          ],
+          [
+            "Pashto",
+            "ps"
+          ],
+          [
+            "Persian",
+            "fa"
+          ],
+          [
+            "Polish",
+            "pl"
+          ],
+          [
+            "Portuguese (Brazil)",
+            "pt"
+          ],
+          [
+            "Portuguese (Portugal)",
+            "pt-PT"
+          ],
+          [
+            "Punjabi (Gurmukhi)",
+            "pa"
+          ],
+          [
+            "Punjabi (Shahmukhi)",
+            "pa-Arab"
+          ],
+          [
+            "Quechua",
+            "qu"
+          ],
+          [
+            "Qʼeqchiʼ",
+            "kek"
+          ],
+          [
+            "Romani",
+            "rom"
+          ],
+          [
+            "Romanian",
+            "ro"
+          ],
+          [
+            "Rundi",
+            "rn"
+          ],
+          [
+            "Russian",
+            "ru"
+          ],
+          [
+            "Sami (North)",
+            "se"
+          ],
+          [
+            "Samoan",
+            "sm"
+          ],
+          [
+            "Sango",
+            "sg"
+          ],
+          [
+            "Sanskrit",
+            "sa"
+          ],
+          [
+            "Santali (Latin)",
+            "sat-Latn"
+          ],
+          [
+            "Santali (Ol Chiki)",
+            "sat"
+          ],
+          [
+            "Scots Gaelic",
+            "gd"
+          ],
+          [
+            "Sepedi",
+            "nso"
+          ],
+          [
+            "Serbian",
+            "sr"
+          ],
+          [
+            "Sesotho",
+            "st"
+          ],
+          [
+            "Seychellois Creole",
+            "crs"
+          ],
+          [
+            "Shan",
+            "shn"
+          ],
+          [
+            "Shona",
+            "sn"
+          ],
+          [
+            "Sicilian",
+            "scn"
+          ],
+          [
+            "Silesian",
+            "szl"
+          ],
+          [
+            "Sindhi",
+            "sd"
+          ],
+          [
+            "Sinhala",
+            "si"
+          ],
+          [
+            "Slovak",
+            "sk"
+          ],
+          [
+            "Slovenian",
+            "sl"
+          ],
+          [
+            "Somali",
+            "so"
+          ],
+          [
+            "Spanish",
+            "es"
+          ],
+          [
+            "Sundanese",
+            "su"
+          ],
+          [
+            "Susu",
+            "sus"
+          ],
+          [
+            "Swahili",
+            "sw"
+          ],
+          [
+            "Swati",
+            "ss"
+          ],
+          [
+            "Swedish",
+            "sv"
+          ],
+          [
+            "Tahitian",
+            "ty"
+          ],
+          [
+            "Tajik",
+            "tg"
+          ],
+          [
+            "Tamazight",
+            "ber-Latn"
+          ],
+          [
+            "Tamazight (Tifinagh)",
+            "ber"
+          ],
+          [
+            "Tamil",
+            "ta"
+          ],
+          [
+            "Tatar",
+            "tt"
+          ],
+          [
+            "Telugu",
+            "te"
+          ],
+          [
+            "Tetum",
+            "tet"
+          ],
+          [
+            "Thai",
+            "th"
+          ],
+          [
+            "Tibetan",
+            "bo"
+          ],
+          [
+            "Tigrinya",
+            "ti"
+          ],
+          [
+            "Tiv",
+            "tiv"
+          ],
+          [
+            "Tok Pisin",
+            "tpi"
+          ],
+          [
+            "Tongan",
+            "to"
+          ],
+          [
+            "Tshiluba",
+            "lua"
+          ],
+          [
+            "Tsonga",
+            "ts"
+          ],
+          [
+            "Tswana",
+            "tn"
+          ],
+          [
+            "Tulu",
+            "tcy"
+          ],
+          [
+            "Tumbuka",
+            "tum"
+          ],
+          [
+            "Turkish",
+            "tr"
+          ],
+          [
+            "Turkmen",
+            "tk"
+          ],
+          [
+            "Tuvan",
+            "tyv"
+          ],
+          [
+            "Twi",
+            "ak"
+          ],
+          [
+            "Udmurt",
+            "udm"
+          ],
+          [
+            "Ukrainian",
+            "uk"
+          ],
+          [
+            "Urdu",
+            "ur"
+          ],
+          [
+            "Uyghur",
+            "ug"
+          ],
+          [
+            "Uzbek",
+            "uz"
+          ],
+          [
+            "Venda",
+            "ve"
+          ],
+          [
+            "Venetian",
+            "vec"
+          ],
+          [
+            "Vietnamese",
+            "vi"
+          ],
+          [
+            "Waray",
+            "war"
+          ],
+          [
+            "Welsh",
+            "cy"
+          ],
+          [
+            "Wolof",
+            "wo"
+          ],
+          [
+            "Xhosa",
+            "xh"
+          ],
+          [
+            "Yakut",
+            "sah"
+          ],
+          [
+            "Yiddish",
+            "yi"
+          ],
+          [
+            "Yoruba",
+            "yo"
+          ],
+          [
+            "Yucatec Maya",
+            "yua"
+          ],
+          [
+            "Zapotec",
+            "zap"
+          ],
+          [
+            "Zulu",
+            "zu"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "textfield",
+      "variable": "tr_more",
+      "label": "Also translate into",
+      "description": "Extra languages shown below the translation, separated by commas: codes or names (fr, ja, Spanish).",
+      "config": {
+        "default": "",
+        "placeholder": "fr, ja",
+        "required": false,
+        "trim": true
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_enter",
+      "label": "↩ Return",
+      "description": "⌘↩ does the other one.",
+      "config": {
+        "default": "copy",
+        "pairs": [
+          [
+            "Copies the translation",
+            "copy"
+          ],
+          [
+            "Pastes the translation",
+            "paste"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "checkbox",
+      "variable": "tr_details",
+      "label": "Details",
+      "description": "From Google Translate, for words and short phrases.",
+      "config": {
+        "default": true,
+        "required": false,
+        "text": "Show dictionary meanings, alternatives, definitions and examples"
+      }
+    },
+    {
+      "type": "checkbox",
+      "variable": "tr_clipboard",
+      "label": "Clipboard",
+      "description": "Only plain text; passwords marked as concealed by password managers are skipped.",
+      "config": {
+        "default": true,
+        "required": false,
+        "text": "Translate the clipboard when nothing is typed"
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_history",
+      "label": "History",
+      "description": "Translations you copy, paste or speak.",
+      "config": {
+        "default": "100",
+        "pairs": [
+          [
+            "Keep the last 100 translations",
+            "100"
+          ],
+          [
+            "Keep the last 500 translations",
+            "500"
+          ],
+          [
+            "Don’t keep a history",
+            "0"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_speech",
+      "label": "Speech (⌃↩)",
+      "description": "macOS voices work offline; add more in System Settings › Accessibility › Spoken Content.",
+      "config": {
+        "default": "auto",
+        "pairs": [
+          [
+            "macOS voice, or Google’s voice when none is installed",
+            "auto"
+          ],
+          [
+            "macOS voices only",
+            "macos"
+          ],
+          [
+            "Google’s voice",
+            "google"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_deepl_formality",
+      "label": "DeepL formality",
+      "description": "For languages that have formal and informal forms (German, French, Japanese…).",
+      "config": {
+        "default": "default",
+        "pairs": [
+          [
+            "Default",
+            "default"
+          ],
+          [
+            "More formal",
+            "prefer_more"
+          ],
+          [
+            "Less formal",
+            "prefer_less"
+          ]
+        ]
+      }
+    },
+    {
+      "type": "popupbutton",
+      "variable": "tr_deepl_english",
+      "label": "DeepL English",
+      "description": "",
+      "config": {
+        "default": "EN-US",
+        "pairs": [
+          [
+            "American English",
+            "EN-US"
+          ],
+          [
+            "British English",
+            "EN-GB"
+          ]
+        ]
+      }
+    }
+  ],
+  "objects": [
+    {
+      "id": "sf_translate",
+      "type": "scriptfilter",
+      "keyword": "{var:keyword_translate}",
+      "title": "Translate",
+      "subtext": "Type text, or leave it empty to translate the clipboard",
+      "running": "Translating…",
+      "script": "tr_query=$1 exec /usr/bin/osascript -l JavaScript ./translate.js filter",
+      "queuedelaymode": 1,
+      "queuemode": 2,
+      "note": "The query goes through the environment (it can hold an API key after “apikey”)"
+    },
+    {
+      "id": "sf_history",
+      "type": "scriptfilter",
+      "keyword": "{var:keyword_history}",
+      "title": "Recent Translations",
+      "subtext": "Search the translations you copied, pasted or spoke",
+      "script": "tr_query=$1 exec /usr/bin/osascript -l JavaScript ./translate.js history"
+    },
+    {
+      "id": "ua_translate",
+      "type": "universalaction",
+      "name": "Translate",
+      "text": true
+    },
+    {
+      "id": "hk_translate",
+      "type": "hotkey",
+      "argument": 1,
+      "note": "Configure a Hotkey to translate the selected text"
+    },
+    {
+      "id": "ua_replace",
+      "type": "universalaction",
+      "name": "Translate and Replace",
+      "text": true
+    },
+    {
+      "id": "hk_replace",
+      "type": "hotkey",
+      "argument": 1,
+      "note": "Configure a Hotkey to replace the selected text with its translation"
+    },
+    {
+      "id": "instant",
+      "type": "script",
+      "script": "tr_query=$1 exec /usr/bin/osascript -l JavaScript ./translate.js instant",
+      "note": "Translates the selection for pasting over it"
+    },
+    {
+      "id": "act",
+      "type": "script",
+      "script": "exec /usr/bin/osascript -l JavaScript ./translate.js act \"$1\"",
+      "note": "Copy, paste, speak, open, swap, history and API key; sets tr_route"
+    },
+    {
+      "id": "route",
+      "type": "conditional",
+      "conditions": [
+        {
+          "id": "copy",
+          "input": "{var:tr_route}",
+          "mode": 0,
+          "match": "copy",
+          "label": "Copy"
+        },
+        {
+          "id": "paste",
+          "input": "{var:tr_route}",
+          "mode": 0,
+          "match": "paste",
+          "label": "Paste"
+        }
+      ],
+      "elselabel": "Message",
+      "note": "tr_route from the action: copy, paste, or a message for the notification"
+    },
+    {
+      "id": "copy",
+      "type": "clipboard",
+      "autopaste": false
+    },
+    {
+      "id": "paste",
+      "type": "clipboard",
+      "autopaste": true
+    },
+    {
+      "id": "notify",
+      "type": "notification"
+    }
+  ],
+  "connections": [
+    {
+      "from": "ua_translate",
+      "to": "sf_translate"
+    },
+    {
+      "from": "hk_translate",
+      "to": "sf_translate"
+    },
+    {
+      "from": "ua_replace",
+      "to": "instant"
+    },
+    {
+      "from": "hk_replace",
+      "to": "instant"
+    },
+    {
+      "from": "sf_translate",
+      "to": "act"
+    },
+    {
+      "from": "sf_translate",
+      "to": "act",
+      "mod": "cmd"
+    },
+    {
+      "from": "sf_translate",
+      "to": "act",
+      "mod": "alt"
+    },
+    {
+      "from": "sf_translate",
+      "to": "act",
+      "mod": "ctrl"
+    },
+    {
+      "from": "sf_translate",
+      "to": "act",
+      "mod": "shift"
+    },
+    {
+      "from": "sf_history",
+      "to": "act"
+    },
+    {
+      "from": "sf_history",
+      "to": "act",
+      "mod": "cmd"
+    },
+    {
+      "from": "sf_history",
+      "to": "act",
+      "mod": "alt"
+    },
+    {
+      "from": "sf_history",
+      "to": "act",
+      "mod": "ctrl"
+    },
+    {
+      "from": "sf_history",
+      "to": "act",
+      "mod": "shift"
+    },
+    {
+      "from": "act",
+      "to": "route"
+    },
+    {
+      "from": "instant",
+      "to": "route"
+    },
+    {
+      "from": "route",
+      "to": "copy",
+      "output": "copy"
+    },
+    {
+      "from": "route",
+      "to": "paste",
+      "output": "paste"
+    },
+    {
+      "from": "route",
+      "to": "notify"
+    }
+  ]
+}

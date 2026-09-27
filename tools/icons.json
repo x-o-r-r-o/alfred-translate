@@ -1,0 +1,23 @@
+{
+  "icon": ["character.bubble.fill", "#2563EB"],
+  "translate": ["character.bubble", "#2563EB"],
+  "language": ["globe", "#0891B2"],
+  "romanize": ["textformat.abc", "#7C3AED"],
+  "dictionary": ["book.closed.fill", "#D97706"],
+  "alternative": ["arrow.triangle.branch", "#0D9488"],
+  "definition": ["text.book.closed.fill", "#B45309"],
+  "example": ["quote.opening", "#64748B"],
+  "synonyms": ["list.bullet", "#9333EA"],
+  "spell": ["wand.and.stars", "#DB2777"],
+  "history": ["clock.arrow.circlepath", "#475569"],
+  "trash": ["trash.fill", "#DC2626"],
+  "refresh": ["arrow.clockwise", "#059669"],
+  "settings": ["gearshape.fill", "#64748B"],
+  "key": ["key.fill", "#CA8A04"],
+  "key-get": ["key.horizontal.fill", "#16A34A"],
+  "key-remove": ["key.slash.fill", "#DC2626"],
+  "info": ["info.circle.fill", "#64748B"],
+  "error": ["exclamationmark.triangle.fill", "#DC2626"],
+  "offline": ["wifi.slash", "#EA580C"],
+  "wait": ["hourglass", "#EA580C"]
+}

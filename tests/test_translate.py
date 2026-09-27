@@ -261,11 +261,47 @@ class TranslateTests(Base):
         self.assertEqual(google_reqs()[-1]["qs"]["sl"], ["de"])
         self.assertEqual(it[0]["mods"]["shift"]["arg"], "en>de [en] Hallo Welt")
 
-    def test_no_second_language(self):
-        it = self.e.sf("hello there", TR_TEST_SYSLANG="en-US", tr_language2="en")
-        self.assertEqual(it[0]["title"], "[en] hello there")
-        row = find(it, "Already in English")
-        self.assertEqual(row["autocomplete"], "hello there >")
+    def test_english_mac_without_second_language(self):
+        # English Mac, language 2 automatic (default) or also English: quick picks instead of a dead end
+        for l2 in ("auto", "en", None):
+            it = self.e.sf("Where is the station?", TR_TEST_SYSLANG="en-US", tr_language2=l2)
+            self.assertEqual(it[0]["title"], "[en] Where is the station?")
+            self.assertEqual(find(it, "Already in English: pick a language")["autocomplete"], "Where is the station? >")
+            picks = [i for i in it if i["title"].startswith("Translate into ")]
+            self.assertEqual([i["autocomplete"] for i in picks],
+                             ["Where is the station? >" + c for c in ("es", "fr", "de", "zh-CN", "ja")])
+            find(it, "Other language…")
+        # the Mac's other preferred languages come first
+        it = self.e.sf("hello", TR_TEST_SYSLANG="en-US,uk-UA", tr_language2="en")
+        self.assertEqual(it[0]["title"], "[uk] hello")  # automatic language 2: the Mac's second language
+        it = self.e.sf("hello", TR_TEST_SYSLANG="en-US,uk-UA", tr_language2="none")
+        self.assertEqual(find(it, "Translate into ")["autocomplete"], "hello >uk")
+
+    def test_picked_language_is_remembered(self):
+        en = dict(TR_TEST_SYSLANG="en-US")
+        self.assertEqual(self.e.sf("Where is the station? >es", **en)[0]["title"], "[es] Where is the station?")
+        it = self.e.sf("Where is the train?", **en)
+        self.assertEqual(it[0]["title"], "[es] Where is the train?")
+        self.assertIn("English → Spanish (already in English)", it[0]["subtitle"])
+        self.assertEqual(self.e.sf(">fr hello", **en)[0]["title"], "[fr] hello")
+        self.assertEqual(self.e.sf("good night", **en)[0]["title"], "[fr] good night")
+        # German text still goes into English (language 1), and an explicit language 2 wins
+        self.assertEqual(self.e.sf("Hallo", **en)[0]["title"], "[en] Hallo")
+        self.assertEqual(self.e.sf("good night", tr_language2="ja", **en)[0]["title"], "[ja] good night")
+        # the Hotkey that replaces the selection uses it too
+        out = json.loads(self.e.run(["instant"], tr_query="good night", **en))["alfredworkflow"]
+        self.assertEqual(out["arg"], "[fr] good night")
+
+    def test_remembered_from_history(self):
+        self.e.act(self.e.sf("cat >it", TR_TEST_SYSLANG="de-DE")[0])
+        os.remove(os.path.join(self.e.data, "last-target.json"))
+        self.assertEqual(self.e.sf("dog", TR_TEST_SYSLANG="en-US")[0]["title"], "[it] dog")
+
+    def test_automatic_second_language(self):
+        # German Mac: English; German Mac that also lists French: French
+        self.assertEqual(self.e.sf("Hallo")[0]["title"], "[en] Hallo")
+        self.assertEqual(self.e.sf("Hallo", TR_TEST_SYSLANG="de-DE,fr-FR")[0]["title"], "[fr] Hallo")
+        self.assertEqual(self.e.sf("Hallo", TR_TEST_SYSLANG="de-DE,fr-FR", tr_language2="en")[0]["title"], "[en] Hallo")
 
     def test_configured_languages(self):
         it = self.e.sf("hello", tr_language1="fr", tr_language2="none")
@@ -704,7 +740,8 @@ class BuildTests(unittest.TestCase):
         codes = {c for c, _, _ in langs}
         for k in ("tr_language1", "tr_language2"):
             for _, v in cfg[k]["config"]["pairs"]:
-                self.assertTrue(v in codes or v in ("system", "none"), v)
+                self.assertTrue(v in codes or v in ("system", "none", "auto"), v)
+        self.assertEqual(cfg["tr_language2"]["config"]["default"], "auto")
         self.assertNotIn("![", info["readme"])
 
 

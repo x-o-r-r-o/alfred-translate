@@ -298,6 +298,35 @@ function configLang(name, fallback) {
   if (v === "system") return systemLangs()[0] || "en";
   return resolveLang(v) || null;
 }
+// Language 2: the configured one when it differs from language 1; otherwise ("auto", or the same language
+// as language 1) the Mac's next preferred language, then English (unless language 1 is English), then the
+// last language picked with >xx. null when there is none: the text is already in the only language known.
+function secondLang(primary) {
+  const v = env("tr_language2", "auto").trim();
+  if (v === "none") return null;
+  const c = v === "auto" || v === "" ? null : configLang("tr_language2", "auto");
+  if (c && !sameLang(c, primary)) return c;
+  const sys = systemLangs().find((x) => !sameLang(x, primary));
+  if (sys) return sys;
+  if (!sameLang(primary, "en")) return "en";
+  return rememberedTarget(primary);
+}
+const lastTargetPath = () => `${dataDir()}/last-target.json`;
+// The last target picked with >xx (or used from the history) that isn't language 1
+function rememberedTarget(primary) {
+  const t = readJSON(lastTargetPath(), {}).code;
+  if (typeof t === "string" && langs().byCode.has(t) && !sameLang(t, primary)) return t;
+  return recentTargets().find((c) => !sameLang(c, primary)) || null;
+}
+function rememberTarget(code) {
+  if (readJSON(lastTargetPath(), {}).code !== code) writeFile(lastTargetPath(), JSON.stringify({ code }));
+}
+// Quick picks when the text is already in the only known language: the Mac's other languages, then popular ones
+function quickPicks(primary) {
+  const out = [];
+  for (const c of [...systemLangs(), ...recentTargets(), "es", "fr", "de", "zh-CN", "ja", "pt", "it"]) if (!sameLang(c, primary) && !out.includes(c)) out.push(c);
+  return out.slice(0, 5);
+}
 function moreLangs() {
   return env("tr_more", "").split(/[,;\s]+/).map((s) => resolveLang(s)).filter(Boolean);
 }
@@ -1143,8 +1172,9 @@ function translateItems(text, spec, parsed, fromClipboard) {
   const src = spec && spec.src ? spec.src : "auto";
   const explicit = !!(spec && spec.dsts.length);
   const primary = explicit ? spec.dsts[0] : configLang("tr_language1", "system") || "en";
-  let secondary = explicit ? null : configLang("tr_language2", "en");
-  if (secondary && sameLang(secondary, primary)) secondary = null;
+  const secondary = explicit ? null : secondLang(primary);
+  // a language picked with >xx becomes language 2 when language 1 has no partner (see secondLang)
+  if (explicit && text && !sameLang(spec.dsts[0], configLang("tr_language1", "system") || "en")) rememberTarget(spec.dsts[0]);
   const extras = (explicit ? spec.dsts.slice(1) : moreLangs()).filter((c) => !sameLang(c, primary));
   let notice = null;
 
@@ -1221,7 +1251,12 @@ function translateItems(text, spec, parsed, fromClipboard) {
   const textPart = parsed.pos === "start" ? parsed.text : parsed.pos === "end" ? parsed.before.trim() : fromClipboard ? "" : parsed.text;
   const pickAc = textPart ? `${textPart} >` : ">";
   if (already && !explicit && !secondary) {
-    items.push(info(`Already in ${langName(dst)}`, "Pick a language (↩), type >fr after the text, or set a second language in the Workflow’s Configuration", "language", { autocomplete: pickAc }));
+    items.push(info(`Already in ${langName(dst)}: pick a language`, "↩ on a language below translates into it, and the next text goes there too · or set language 2 in the Workflow’s Configuration", "language", { autocomplete: pickAc }));
+    for (const c of quickPicks(dst)) {
+      const l = langs().byCode.get(c);
+      items.push(info(`Translate into ${langName(c)}`, `${l && l.native ? `${l.native} · ` : ""}↩ or ⇥ adds >${c}`, "language", { autocomplete: `${textPart} >${c}`.trim() }));
+    }
+    items.push(info("Other language…", "Search every language", "language", { autocomplete: pickAc }));
   } else {
     const detail = r.srcTranslit && r.srcTranslit !== text ? ` · ${oneLine(r.srcTranslit, 90)}` : "";
     items.push(info(`${src === "auto" ? "Detected" : "From"}: ${langName(fromLang)} → ${langName(dst)}`, `↩ Pick another language${detail}`, "language", { autocomplete: pickAc }));
@@ -1512,8 +1547,7 @@ function instant(text) {
   if (body.length > MAX_CHARS) return route("notify", `Couldn’t translate: the selection is longer than ${MAX_CHARS.toLocaleString("en-US")} characters`);
   let provider = providerId();
   const primary = configLang("tr_language1", "system") || "en";
-  let secondary = configLang("tr_language2", "en");
-  if (secondary && sameLang(secondary, primary)) secondary = null;
+  const secondary = secondLang(primary);
   let res = translateMany(provider, body, "auto", [primary], { details: false, noExtra: true }).get(primary);
   if (provider === "deepl" && res.error && !res.stale && ["nokey", "auth", "quota", "unsupported", "rate"].includes(res.error.kind)) {
     provider = "google";

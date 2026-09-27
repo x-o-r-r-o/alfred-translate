@@ -5,7 +5,7 @@
   "category": "Productivity",
   "createdby": "x-o-r-r-o",
   "webaddress": "https://github.com/x-o-r-r-o/alfred-translate",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "variablesdontexport": [],
   "config": [
     {
@@ -1066,10 +1066,14 @@
       "type": "popupbutton",
       "variable": "tr_language2",
       "label": "…or, when the text is already in it, into",
-      "description": "Like Raycast’s language pairs: English text becomes German, German text becomes English.",
+      "description": "Like Raycast’s language pairs: English text becomes German, German text becomes English. Automatic: your Mac’s second preferred language, else English (or, when language 1 is English, the last language you picked with >xx).",
       "config": {
-        "default": "en",
+        "default": "auto",
         "pairs": [
+          [
+            "Automatic",
+            "auto"
+          ],
           [
             "Nothing (ask)",
             "none"

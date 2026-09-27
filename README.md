@@ -4,7 +4,7 @@ Translate text in Alfred with Google Translate or DeepL: several languages at on
 
 ## Usage
 
-Translate text via the `tra` keyword. The language is detected, and the text is translated into your language. When the text is already in your language, it is translated into your second language instead, so one keyword works both ways (English text becomes German, German text becomes English). With nothing typed, Translate uses the text in the clipboard.
+Translate text via the `tra` keyword. The language is detected, and the text is translated into your language. When the text is already in your language, it is translated into your second language instead, so one keyword works both ways (English text becomes German, German text becomes English). The second language is your Mac’s next preferred language, or English. On a Mac that only uses English, pick a language from the rows shown under English text, or add `>es` to the text: Translate remembers it, so the next English text goes there too. With nothing typed, Translate uses the text in the clipboard.
 
 ![Translating a sentence](images/tra.png)
 

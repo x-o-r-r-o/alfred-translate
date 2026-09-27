@@ -15,6 +15,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 
 ## Features (v1.0)
 - [x] `tra <text>`: auto-detect, translate into language 1 (default: the Mac’s language); already in it → language 2 (Raycast’s language pairs)
+- [x] Language 2 “Automatic” (default): the Mac’s second preferred language, else English, else (English-only Mac) the last language picked with `>xx` or from the history; without any, quick-pick rows (the Mac’s other languages, recent ones, then Spanish, French, German, Chinese, Japanese) under “Already in English: pick a language” (found in real Alfred 5.8.1 testing: English text on an English Mac dead-ended)
 - [x] Inline languages: `>fr`, `>fr,ja`, `en>de`, names in English or natively (`>german`, `>deutsch`), unique prefixes (`>ger`), aliases (`he`, `nb`, `zh-hant`…); `>` or `>ja…` opens a searchable picker (recent languages first); unknown languages get a clear row
 - [x] “Also translate into” extra languages (fetched in parallel)
 - [x] Rows: translation, spelling correction (“Did you mean…” / “Translated as…”), romanization, extra languages, detected language (with source pronunciation), dictionary by part of speech (with articles and reverse translations), alternatives, definitions with examples, examples, synonyms
@@ -54,6 +55,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 - [ ] ⌘Y Quick Look shows the long-text file; ⌘L Large Type; ⌘C copies.
 - [ ] ⇧↩ Swap reopens Alfred with `tra de>en …`; ⌥↩ in `trh` reopens `tra`.
 - [ ] Picker: ↩ on a language row autocompletes and the translation follows.
+- [ ] English-only Mac: English text shows the quick picks; after ↩ on Spanish, the next English text goes into Spanish.
 - [ ] `tra apikey` with a real DeepL Free key: save from clipboard (clipboard cleared), usage row, translations, Remove.
 - [ ] Empty query with a password manager item on the clipboard: not translated.
 - [ ] Workflow Configuration: languages popups (long lists), “Also translate into”, ↩ action swap, history off, speech modes, DeepL formality/English.
@@ -72,7 +74,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 - [x] No compiled binaries; quarantine untouched
 - [x] No hard-coded paths; `prefs.plist` is git-ignored; the API key lives only in the Keychain
 - [x] AI assistance disclosed in the README
-- [x] Version 1.0.0 in `workflow.json`; `python3 tools/build.py --package` builds `dist/alfred-translate-1.0.0.alfredworkflow`
+- [x] Version 1.0.1 in `workflow.json`; `python3 tools/build.py --package` builds `dist/alfred-translate-1.0.1.alfredworkflow`
 - [ ] GitHub release with the `.alfredworkflow` attached (by the author)
 - [ ] Forum post in “Share your Workflows” (by the author)
 

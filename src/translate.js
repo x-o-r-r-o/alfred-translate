@@ -1193,7 +1193,7 @@ function translateItems(text, spec, parsed, fromClipboard) {
     return items;
   }
   const r = main.result;
-  if (main.stale) items.unshift(info(`${main.error.kind === "network" ? "Offline" : `${NAMES[provider]} is limiting requests`}: showing a translation from ${fmtAgo(main.age)}`, main.error.kind === "network" ? "Check your internet connection" : `Try again in ${fmtWait((main.error.until || now() + 60) - now())}`, main.error.kind === "network" ? "offline" : "wait"));
+  if (main.stale) items.unshift(info(`${main.error.kind === "network" ? "Offline" : main.error.local ? "Slowing down" : `${NAMES[provider]} is limiting requests`}: showing a translation from ${fmtAgo(main.age)}`, main.error.kind === "network" ? "Check your internet connection" : `Try again in ${fmtWait((main.error.until || now() + 60) - now())}`, main.error.kind === "network" ? "offline" : "wait"));
 
   // 1. the translation
   const already = sameLang(fromLang, dst) && fromLang !== "auto";
@@ -1238,7 +1238,10 @@ function translateItems(text, spec, parsed, fromClipboard) {
         items.push(resultItem(e.word, `${g.pos || "meaning"} · ${art}${e.word} · ${oneLine(e.reverse.slice(0, 5).join(", "), 100)}`, e.word, dctx, { iconName: "dictionary", ql: false }));
       }
     }
-    for (const a of r.alts.slice(0, 3)) items.push(resultItem(a, `Alternative translation · ${langName(dst)}`, a, dctx, { iconName: "alternative", ql: false }));
+    // alternatives that only differ from a shown row by case or end punctuation are left out
+    const norm = (x) => x.toLowerCase().replace(/^[\s\p{P}]+|[\s\p{P}]+$/gu, "");
+    const shown = new Set([norm(r.text), ...r.dict.flatMap((g) => g.entries.slice(0, 4).map((e) => norm(e.word)))]);
+    for (const a of r.alts.filter((x) => !shown.has(norm(x))).slice(0, 3)) items.push(resultItem(a, `Alternative translation · ${langName(dst)}`, a, dctx, { iconName: "alternative", ql: false }));
     const sctx = Object.assign({}, ctx, { speakLang: fromLang, swap: false });
     for (const d of r.defs.slice(0, 4)) items.push(resultItem(d.def, `Definition${d.pos ? ` (${d.pos})` : ""}${d.example ? ` · “${oneLine(d.example, 90)}”` : ""}`, d.def, sctx, { iconName: "definition", ql: false }));
     const exampleSet = new Set(r.defs.map((d) => d.example));

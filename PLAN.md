@@ -20,7 +20,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 - [x] Rows: translation, spelling correction (“Did you mean…” / “Translated as…”), romanization, extra languages, detected language (with source pronunciation), dictionary by part of speech (with articles and reverse translations), alternatives, definitions with examples, examples, synonyms
 - [x] ↩ copy, ⌘↩ paste (↩/⌘↩ can be swapped), ⌥↩ open in Google Translate / DeepL, ⌃↩ speak (again: stop), ⇧↩ swap (translate back), ⌘C, ⌘L, ⌘Y (Quick Look file with translation and original)
 - [x] Empty query: translates the clipboard (not concealed/password items; can be turned off); otherwise shows recent translations
-- [x] Universal Action “Translate” and a Hotkey on the selection; “Translate and Replace” Universal Action and Hotkey (paste over the selection)
+- [x] Universal Action “Translate Text” and a Hotkey on the selection; “Translate and Replace” Universal Action and Hotkey (paste over the selection)
 - [x] History (`trh`): search, copy, paste, speak, translate again, remove one, clear; 100 / 500 / off
 - [x] DeepL: API key via `tra apikey` / `tra :key` (Keychain, Security framework, clipboard cleared), usage row, Free/Pro host by `:fx`, formality, EN-US/EN-GB, PT-BR/PT-PT, ZH-HANS/ZH-HANT, target list from `/v2/languages` cached for a week; Google fallback with an explanatory row
 - [x] Speech: macOS voice for the language (AVSpeechSynthesisVoice → `say -v`, offline), Google’s voice (`translate_tts`, pieces joined, `afplay`) when no voice is installed; configurable

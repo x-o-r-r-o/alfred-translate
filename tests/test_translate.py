@@ -456,11 +456,11 @@ class CacheAndLimitTests(Base):
         self.assertEqual(it[0]["title"], "Google Translate is limiting requests: showing a translation from 8 days ago")
 
     def test_shared_request_budget(self):
-        for i in range(12):
-            self.e.sf("word %d" % i, TR_UNTHROTTLED=None)
+        for i in range(10):
+            self.e.sf("word %d >fr,it" % i, TR_UNTHROTTLED=None)  # 2 requests each
         it = self.e.sf("word 99", TR_UNTHROTTLED=None)
         self.assertEqual(it[0]["title"], "Slowing down: too many translations in a few seconds")
-        self.assertEqual(len(google_reqs()), 12)
+        self.assertEqual(len(google_reqs()), 20)
 
     def test_errors(self):
         it = self.e.sf("SERVERERR")
@@ -515,6 +515,13 @@ class DeepLTests(Base):
         it = self.e.sf("hello >fr,sw", tr_provider="deepl")
         self.assertEqual(it[0]["title"], "<FR> hello")
         self.assertIn("Google", find(it, "[sw] hello")["subtitle"])
+
+    def test_second_language_missing_in_deepl(self):
+        self.e.set_key()
+        it = self.e.sf("Hallo", tr_provider="deepl", tr_language2="sw")
+        self.assertEqual(it[0]["title"], "Translated by Google: DeepL doesn’t translate into Swahili")
+        self.assertEqual(it[1]["title"], "[sw] Hallo")
+        self.assertIn("German → Swahili (already in German) · Google", it[1]["subtitle"])
 
     def test_bad_key_and_quota(self):
         self.e.set_key("ffffffff-4e5f-4a6b-8c7d-9e0f1a2b3c4d:fx")
@@ -586,13 +593,16 @@ class ActionTests(Base):
         it = self.e.sf("thank", cmd="history")
         self.assertEqual(titles(it), ["[de] thank you"])
         self.assertEqual(it[0]["mods"]["alt"]["arg"], "en>de thank you")
+        self.assertNotIn("tr_orig", it[0]["variables"])  # history rows name their entry instead
         out = self.e.act(it[0], "shift")
         self.assertEqual(out["arg"], "Removed from the history")
         self.assertEqual(len(self.e.history()), 2)
         self.assertEqual(self.e.sf("zzz", cmd="history")[0]["title"], "No matching translations")
-        # home rows show recent translations
+        # home rows show recent translations; copying one moves it to the top without a duplicate
         it = self.e.sf("")
         self.assertEqual(it[1]["title"], "[de] cat")
+        self.e.act(it[2])
+        self.assertEqual([h["text"] for h in self.e.history()], ["good evening", "cat"])
         out = self.e.act(find(self.e.sf("", cmd="history"), "Clear the history"))
         self.assertEqual(out["arg"], "Cleared 2 translations from the history")
         self.assertEqual(self.e.sf("", cmd="history")[0]["title"], "No translations yet")

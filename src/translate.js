@@ -42,7 +42,7 @@ const STALE = 30 * 86400; // …and kept for a month, to show while offline
 const CACHE_FILES = 1000;
 const GOOGLE_CLIENTS = ["gtx", "dict-chrome-ex"]; // the second client is tried when the first one is rate limited
 // Requests per service across every process (each keystroke is a separate process): [max, seconds]…
-const LIMITS = { google: [[12, 10], [90, 60]], deepl: [[8, 10], [60, 60]], tts: [[20, 10]] };
+const LIMITS = { google: [[20, 10], [150, 60]], deepl: [[10, 10], [60, 60]], tts: [[20, 10]] };
 
 // ---------- small helpers ----------
 
@@ -219,7 +219,7 @@ const ALIASES = new Map([
   ["he", "iw"], ["jw", "jv"], ["fil", "tl"], ["nb", "no"], ["nn", "no"], ["zh", "zh-CN"], ["zh-hans", "zh-CN"], ["zh-cn", "zh-CN"],
   ["zh-sg", "zh-CN"], ["zh-hant", "zh-TW"], ["zh-tw", "zh-TW"], ["zh-hk", "zh-TW"], ["pt-br", "pt"], ["pt-pt", "pt-PT"], ["mni", "mni-Mtei"],
   ["en-us", "en"], ["en-gb", "en"], ["iw", "iw"], ["cn", "zh-CN"], ["jp", "ja"], ["kr", "ko"], ["ua", "uk"], ["cz", "cs"], ["gr", "el"],
-  ["dk", "da"], ["se", "sv"], ["chinese", "zh-CN"], ["mandarin", "zh-CN"], ["portuguese", "pt"], ["farsi", "fa"], ["tagalog", "tl"],
+  ["dk", "da"], ["se", "sv"], ["中文", "zh-CN"], ["汉语", "zh-CN"], ["繁體", "zh-TW"], ["chinese", "zh-CN"], ["mandarin", "zh-CN"], ["portuguese", "pt"], ["farsi", "fa"], ["tagalog", "tl"],
 ]);
 function langName(code) {
   if (code === "auto") return "Auto-detect";
@@ -243,7 +243,7 @@ function resolveLang(s, allowAuto) {
     if (a2 && L.byCode.has(a2)) return a2;
   }
   for (const l of L.list) if (l.name.toLowerCase() === low || (l.native && l.native.toLowerCase() === low)) return l.code;
-  if (low.length < 3) return null;
+  if (low.length < (/^[\x00-\x7f]*$/.test(low) ? 3 : 2)) return null; // “ger”, but also “中文”, “日本”
   const hits = L.list.filter((l) => l.name.toLowerCase().startsWith(low) || (l.native && l.native.toLowerCase().startsWith(low)));
   return hits.length === 1 ? hits[0].code : null;
 }
@@ -866,6 +866,22 @@ function addHistory(entry) {
     saveHistory(list.slice(0, max));
   });
 }
+// A history entry's reference: its time, target and a hash of its text and translation
+function histRef(e) {
+  return `${e.t}|${e.dst}|${hash(e.text + "\u0000" + e.result)}`;
+}
+function touchHistory(ref) {
+  if (!historyMax()) return;
+  withLock(`${dataDir()}/history.lock`, () => {
+    const list = loadHistory();
+    const i = list.findIndex((e) => histRef(e) === ref);
+    if (i < 1) return;
+    const [e] = list.splice(i, 1);
+    e.t = Math.round(now());
+    list.unshift(e);
+    saveHistory(list);
+  });
+}
 function recentTargets() {
   const seen = [];
   for (const e of loadHistory()) if (e.dst && !seen.includes(e.dst)) seen.push(e.dst);
@@ -928,7 +944,8 @@ function resultItem(title, subtitle, value, ctx, extra = {}) {
   const enterPastes = env("tr_enter", "copy") === "paste";
   const arg = inlineArg(value);
   const provider = ctx.provider;
-  const vars = { tr_src: ctx.src || "", tr_dst: ctx.speakLang || ctx.dst, tr_provider: provider, tr_orig: ctx.orig.length > HISTORY_TEXT_MAX ? ctx.orig.slice(0, HISTORY_TEXT_MAX) : ctx.orig };
+  // history rows name their entry (tr_hist) instead of carrying the original text again
+  const vars = ctx.hist ? { tr_hist: ctx.hist, tr_dst: ctx.speakLang || ctx.dst } : { tr_src: ctx.src || "", tr_dst: ctx.speakLang || ctx.dst, tr_provider: provider, tr_orig: ctx.orig.length > HISTORY_TEXT_MAX ? ctx.orig.slice(0, HISTORY_TEXT_MAX) : ctx.orig };
   const primary = enterPastes ? "paste" : "copy", other = enterPastes ? "copy" : "paste";
   const it = {
     title: oneLine(title, 250),
@@ -941,7 +958,7 @@ function resultItem(title, subtitle, value, ctx, extra = {}) {
       cmd: { arg, subtitle: enterPastes ? "Copy to the clipboard" : "Paste into the frontmost app", variables: Object.assign({}, vars, { tr_action: other }) },
       alt: { arg: webURL(provider, ctx.orig, ctx.src, ctx.dst), subtitle: `Open in ${provider === "deepl" ? "DeepL" : "Google Translate"}`, variables: { tr_action: "open" } },
       ctrl: { arg, subtitle: `Speak (${langName(ctx.speakLang || ctx.dst)})`, variables: Object.assign({}, vars, { tr_action: "speak" }) },
-      shift: ctx.swap === false || !ctx.src || ctx.src === "auto"
+      shift: ctx.swap === false || !ctx.src || ctx.src === "auto" || sameLang(ctx.src, ctx.dst)
         ? { valid: false, arg: "", subtitle: "Can’t swap: the source language is unknown" }
         : { arg: `${ctx.dst}>${ctx.src} ${value.length > 2000 ? value.slice(0, 2000) : value}`, subtitle: `Swap: translate this back into ${langName(ctx.src)}`, variables: { tr_action: "swap" } },
     },
@@ -960,7 +977,7 @@ function errorItem(err, provider, sl, tl, text) {
     case "network":
       return info(`Couldn’t reach ${name}`, "Check your internet connection", "offline");
     case "rate":
-      if (err.local) return info("Slowing down: too many translations in a few seconds", "Pause typing for a moment, then add a space to try again", "wait");
+      if (err.local) return info("Slowing down: too many translations in a few seconds", "Try again in a few seconds", "wait");
       return open(`${name} is limiting requests`, `Try again in ${fmtWait((err.until || now() + 60) - now())} · ↩ Open in ${provider === "deepl" ? "DeepL" : "Google Translate"}`, "wait");
     case "nokey":
       return info("Set your DeepL API key", `Save it via “${kwTranslate()} apikey” · or pick Google Translate in the Workflow’s Configuration`, "key", { autocomplete: "apikey " });
@@ -1105,7 +1122,7 @@ function homeItems() {
   if (max) {
     const h = loadHistory().slice(0, 5);
     for (const e of h) {
-      const ctx = { provider: e.provider === "deepl" ? "deepl" : "google", src: e.src, dst: e.dst, orig: e.text };
+      const ctx = { provider: e.provider === "deepl" ? "deepl" : "google", src: e.src, dst: e.dst, orig: e.text, hist: histRef(e) };
       items.push(resultItem(e.result, `${langName(e.src)} → ${langName(e.dst)} · ${oneLine(e.text, 80)}`, e.result, ctx, { iconName: "history" }));
     }
     if (h.length) items.push(actionItem("More recent translations…", `Search them via the “${kwHistory()}” keyword`, "search", `${kwHistory()} `, "history"));
@@ -1150,8 +1167,13 @@ function translateItems(text, spec, parsed, fromClipboard) {
   const detected = main && main.result ? main.result.src || src : src;
   // already in the target language: translate into the second language instead
   if (main && main.result && !explicit && sameLang(detected, primary) && secondary) {
-    const r2 = translateMany(provider, text, src === "auto" ? detected : src, [secondary], { details, noExtra: true });
-    const m2 = r2.get(secondary);
+    const sl2 = src === "auto" ? detected : src;
+    let m2 = translateMany(provider, text, sl2, [secondary], { details, noExtra: true }).get(secondary);
+    if (deeplFallback(m2)) {
+      notice = m2.error;
+      provider = "google";
+      m2 = translateMany(provider, text, sl2, [secondary], { details }).get(secondary);
+    }
     if (m2) {
       main = m2;
       dst = secondary;
@@ -1277,10 +1299,10 @@ function historyItems(query) {
   if (!all.length) return [info("No translations yet", `Translations you copy, paste or speak via “${kwTranslate()}” show up here`, "history")];
   const words = query.toLowerCase().split(/\s+/).filter(Boolean);
   const hits = all.filter((e) => words.every((w) => e.text.toLowerCase().includes(w) || e.result.toLowerCase().includes(w) || langName(e.dst).toLowerCase().startsWith(w)));
-  const items = hits.slice(0, 50).map((e, i) => {
-    const ctx = { provider: e.provider === "deepl" ? "deepl" : "google", src: e.src, dst: e.dst, orig: e.text };
+  const items = hits.slice(0, 30).map((e, i) => {
+    const ctx = { provider: e.provider === "deepl" ? "deepl" : "google", src: e.src, dst: e.dst, orig: e.text, hist: histRef(e) };
     const it = resultItem(e.result, `${langName(e.src)} → ${langName(e.dst)} · ${fmtAgo(now() - e.t)} · ${oneLine(e.text, 80)}`, e.result, ctx, { iconName: "history" });
-    it.mods.shift = { arg: String(i), subtitle: "Remove from the history", variables: { tr_action: "forget", tr_forget: JSON.stringify([e.t, e.dst, e.text.slice(0, 200)]) } };
+    it.mods.shift = { arg: String(i), subtitle: "Remove from the history", variables: { tr_action: "forget", tr_hist: histRef(e) } };
     it.mods.alt = { arg: `${e.src || ""}>${e.dst} ${e.text.length > 2000 ? e.text.slice(0, 2000) : e.text}`, subtitle: `Translate again via “${kwTranslate()}”`, variables: { tr_action: "swap" } };
     return it;
   });
@@ -1403,6 +1425,8 @@ function alfredSearch(query) {
   return undefined;
 }
 function recordHistory(text) {
+  const ref = env("tr_hist", "");
+  if (ref) return touchHistory(ref); // a row from the history: move it to the top
   addHistory({ provider: env("tr_provider", ""), src: env("tr_src", ""), dst: env("tr_dst", ""), text: env("tr_orig", ""), result: text });
 }
 
@@ -1434,14 +1458,11 @@ function act(arg) {
     case "search":
       return route(test ? "notify" : "none", alfredSearch(arg) || "");
     case "forget": {
-      let key;
-      try {
-        key = JSON.parse(env("tr_forget", "null"));
-      } catch (e) {}
-      if (!Array.isArray(key)) return route("notify", "Couldn’t remove the translation");
+      const ref = env("tr_hist", "");
+      if (!ref) return route("notify", "Couldn’t remove the translation");
       const removed = withLock(`${dataDir()}/history.lock`, () => {
         const list = loadHistory();
-        const next = list.filter((e) => !(e.t === key[0] && e.dst === key[1] && e.text.slice(0, 200) === key[2]));
+        const next = list.filter((e) => histRef(e) !== ref);
         if (next.length === list.length) return false;
         return saveHistory(next);
       });
@@ -1512,11 +1533,11 @@ function instant(text) {
 
 // Alfred rejects the whole JSON when a string holds an unpaired surrogate; bidi overrides and control
 // characters are removed from display text (titles, subtitles). Args and copied text are kept exactly.
-const EXACT = new Set(["arg", "copy", "largetype", "autocomplete", "tr_orig", "tr_key", "tr_forget", "quicklookurl"]);
+const EXACT = new Set(["arg", "copy", "largetype", "autocomplete", "tr_orig", "tr_key", "quicklookurl"]);
 function wellFormed(k, v) {
   if (typeof v !== "string") return v;
   v = v.replace(/[\uD800-\uDBFF][\uDC00-\uDFFF]|[\uD800-\uDFFF]/g, (m) => (m.length === 2 ? m : "\ufffd"));
-  if (EXACT.has(k)) return v;
+  if (EXACT.has(k)) return v.replace(/\x00/g, ""); // a NUL can't travel in Alfred's variables or argv
   return v.replace(/[\u200e\u200f\u061c\u202a-\u202e\u2066-\u2069]/g, "").replace(/[\x00-\x1f\x7f-\x9f\u2028\u2029]+/g, " ");
 }
 

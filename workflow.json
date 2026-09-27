@@ -2239,7 +2239,7 @@
     {
       "id": "ua_translate",
       "type": "universalaction",
-      "name": "Translate",
+      "name": "Translate Text",
       "text": true
     },
     {

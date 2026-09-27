@@ -26,7 +26,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 - [x] Speech: macOS voice for the language (AVSpeechSynthesisVoice → `say -v`, offline), Google’s voice (`translate_tts`, pieces joined, `afplay`) when no voice is installed; configurable
 - [x] Long text: split at paragraphs, sentences, then words into ≤ 4,500-character requests sent in parallel and joined with the original whitespace; cut at 30,000 characters with a notice; results over 5,000 characters reach the action through a cache file
 - [x] Caching: identical requests (provider, languages, options, text) cached for a week, kept for a month to show while offline or rate limited; pruned hourly (1,000 files)
-- [x] Rate limits across processes: a shared request log (Google 12/10 s and 90/min, DeepL 8/10 s and 60/min, speech 20/10 s); after a 429 the Google client is switched (`gtx` → `dict-chrome-ex`) and the limited one backs off 1, 2, 4… up to 15 min; an HTML “unusual traffic” page counts as a rate limit; a timeout pauses requests for 8 s
+- [x] Rate limits across processes: a shared request log (Google 20/10 s and 150/min, DeepL 10/10 s and 60/min, speech 20/10 s); after a 429 the Google client is switched (`gtx` → `dict-chrome-ex`) and the limited one backs off 1, 2, 4… up to 15 min; an HTML “unusual traffic” page counts as a rate limit; a timeout pauses requests for 8 s
 - [x] Script Filter `queuemode` 2 with automatic queue delay; atomic writes; locks tolerate a killed owner
 
 ## Tech
@@ -42,6 +42,7 @@ Raycast’s “Google Translate” extension by gebeto has about 490,000 install
 - The dictionary, alternatives, definitions and romanization exist only with Google.
 - The macOS voice is the system’s default for the language (as `AVSpeechSynthesisVoice(language:)` picks it); enhanced/premium voices are used when they are that default.
 - DeepL’s web link uses its `#src/dst/text` URL form; very long text is cut at 5,000 characters in web links.
+- Cached translations and Quick Look files (which include the original text) stay in the workflow’s cache folder for up to a month (Quick Look files a day); `tra :cache` removes them. The history is in the workflow’s data folder.
 - A DeepL key typed after `apikey` is passed to the Script Filter in the environment (not argv), but it is still briefly visible to processes of the same user; the clipboard is the safer way.
 
 ## Verify in real Alfred
